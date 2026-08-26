@@ -1,0 +1,34 @@
+import 'package:sinhala_dictionary_app/core/enums/ai_language.dart';
+import 'package:sinhala_dictionary_app/core/services/api_service.dart';
+import 'package:sinhala_dictionary_app/core/services/local_storage_service.dart';
+
+class AiInsightsRepository {
+  final ApiService apiService;
+  final LocalStorageService localStorageService;
+
+  AiInsightsRepository({
+    required this.apiService,
+    required this.localStorageService,
+  });
+
+  Future<({AiLanguage language, String insights})> getAiInsights({
+    required String word,
+    AiLanguage? language,
+  }) async {
+    final targetLanguage = language ?? getSavedLanguage();
+
+    final insights = targetLanguage == AiLanguage.sinhala
+        ? await apiService.getSinhalaInsights(word)
+        : await apiService.getEnglishInsights(word);
+
+    return (language: targetLanguage, insights: insights);
+  }
+
+  AiLanguage getSavedLanguage() {
+    return localStorageService.getAiLangauge();
+  }
+
+  Future<void> setSavedLanguage(AiLanguage language) async {
+    await localStorageService.saveAiLanguage(language);
+  }
+}
