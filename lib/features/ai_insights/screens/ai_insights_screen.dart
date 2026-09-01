@@ -46,10 +46,10 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.warning,
                         size: 48,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).colorScheme.error,
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -63,17 +63,17 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange[800],
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onError,
                         ),
                         onPressed: () {
                           context.read<AiInsightsCubit>().getAiInsights(
                             word: widget.targetWord,
                           );
                         },
-                        child: const Text(
-                          "Retry",
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        child: const Text("Retry"),
                       ),
                     ],
                   ),
