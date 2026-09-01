@@ -18,6 +18,12 @@ class ServerException extends AppException {
   ]);
 }
 
+class LimitExceedException extends AppException {
+  const LimitExceedException([
+    super.message = 'Current Limit is Exceeded. Please try again later',
+  ]);
+}
+
 class UnknownException extends AppException {
   const UnknownException([
     super.message = 'Something went wrong. Please try again.',

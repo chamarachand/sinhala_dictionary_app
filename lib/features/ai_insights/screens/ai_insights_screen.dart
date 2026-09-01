@@ -27,7 +27,7 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
       builder: (context, state) {
         return Column(
           children: [
-            _buildMiniLanguagePill(context, state),
+            LanguagePill(state: state, targetWord: widget.targetWord),
             if (state is AiInsightsLoading)
               const Expanded(
                 child: Center(
@@ -47,13 +47,14 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
-                        Icons.cloud_off,
+                        Icons.warning,
                         size: 48,
                         color: Colors.orangeAccent,
                       ),
                       const SizedBox(height: 12),
-                      const Text(
-                        "Couldn't load insights",
+                      Text(
+                        state.message,
+                        textAlign: .center,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -70,7 +71,7 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
                           );
                         },
                         child: const Text(
-                          "Retry Lookup",
+                          "Retry",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -105,8 +106,19 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
       },
     );
   }
+}
 
-  Widget _buildMiniLanguagePill(BuildContext context, AiInsightsState state) {
+class LanguagePill extends StatelessWidget {
+  final String targetWord;
+  final AiInsightsState state;
+  const LanguagePill({
+    super.key,
+    required this.state,
+    required this.targetWord,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Row(
@@ -120,7 +132,7 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
           selected: {state.language},
           onSelectionChanged: (selected) {
             context.read<AiInsightsCubit>().changeLanguage(
-              word: widget.targetWord,
+              word: targetWord,
               newLanguage: selected.first,
             );
           },
@@ -147,5 +159,6 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
         ),
       ],
     );
+    ;
   }
 }

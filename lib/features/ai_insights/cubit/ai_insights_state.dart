@@ -21,5 +21,7 @@ class AiInsightsLoaded extends AiInsightsState {
 }
 
 class AiInsightsError extends AiInsightsState {
-  AiInsightsError({required super.language});
+  final String message;
+
+  AiInsightsError({required super.language, required this.message});
 }

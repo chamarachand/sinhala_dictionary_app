@@ -7,7 +7,7 @@ import 'package:sinhala_dictionary_app/features/history/repository/history_repos
 import 'package:sinhala_dictionary_app/features/search/data/word_definition.dart';
 import 'package:sinhala_dictionary_app/features/word_details/widgets/word_banner.dart';
 import 'package:sinhala_dictionary_app/features/ai_insights/screens/ai_insights_screen.dart';
-import 'package:sinhala_dictionary_app/screens/word_details/dictionary_tab_view.dart';
+import 'package:sinhala_dictionary_app/features/word_details/screens/dictionary_tab_view.dart';
 
 class WordDetailTabScreen extends StatefulWidget {
   final WordDefinition wordData;
