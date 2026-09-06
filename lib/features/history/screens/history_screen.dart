@@ -21,14 +21,14 @@ class HistoryScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state is HistoryEmpty) {
-              return const Center(child: Text('No history found.'));
-            }
-
             if (state is HistoryLoaded) {
               final history = (language == DictionaryLanguage.english)
                   ? state.englishHistory
                   : state.sinhalaHistory;
+
+              if (history.isEmpty) {
+                return const Center(child: Text('No history found.'));
+              }
 
               return ListView.builder(
                 itemCount: history.length,
@@ -54,7 +54,7 @@ class HistoryScreen extends StatelessWidget {
               );
             }
 
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           },
         ),
       ),

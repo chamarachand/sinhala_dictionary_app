@@ -55,18 +55,17 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
                       Text(
                         state.message,
                         textAlign: .center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.error,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer,
                           foregroundColor: Theme.of(
                             context,
-                          ).colorScheme.onError,
+                          ).colorScheme.primary,
                         ),
                         onPressed: () {
                           context.read<AiInsightsCubit>().getAiInsights(
@@ -159,6 +158,5 @@ class LanguagePill extends StatelessWidget {
         ),
       ],
     );
-    ;
   }
 }

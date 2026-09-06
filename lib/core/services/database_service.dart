@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sinhala_dictionary_app/core/enums/dictionary_language.dart';
+import 'package:sinhala_dictionary_app/core/enums/history_sort_options.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseService {
@@ -119,9 +120,17 @@ class DatabaseService {
   }
 
   Future<List<Map<String, dynamic>>> getFavoriteWords(
-    DictionaryLanguage language,
-  ) async {
+    DictionaryLanguage language, {
+    SortOptions sortOption = .latest,
+  }) async {
     final db = await database;
+
+    final orderByClause = switch (sortOption) {
+      .alphabeticalAZ => 'd.word ASC',
+      .alphabeticalZA => 'd.word DESC',
+      .latest => 'f.created_at DESC',
+      _ => 'f.created_at DESC',
+    };
 
     return await db.rawQuery(
       '''
@@ -129,8 +138,8 @@ class DatabaseService {
     FROM favorites f
     JOIN dictionary d ON f.word_id = d.id
     WHERE d.direction = ?
-    ORDER BY f.created_at DESC
-  ''',
+    ORDER BY $orderByClause
+    ''',
       [language.direction],
     );
   }
@@ -165,9 +174,17 @@ class DatabaseService {
   }
 
   Future<List<Map<String, dynamic>>> getSearchHistory(
-    DictionaryLanguage language,
-  ) async {
+    DictionaryLanguage language, {
+    SortOptions sortOption = .latest,
+  }) async {
     final db = await database;
+
+    final orderByClause = switch (sortOption) {
+      .alphabeticalAZ => 'd.word ASC',
+      .alphabeticalZA => 'd.word DESC',
+      .mostViewed => 'h.search_count DESC, h.last_searched_at DESC',
+      .latest => 'h.last_searched_at DESC',
+    };
 
     return await db.rawQuery(
       '''
@@ -175,7 +192,7 @@ class DatabaseService {
     FROM search_history h
     JOIN dictionary d ON h.word_id = d.id
     WHERE d.direction = ?
-    ORDER BY h.last_searched_at DESC
+    ORDER BY $orderByClause
     ''',
       [language.direction],
     );

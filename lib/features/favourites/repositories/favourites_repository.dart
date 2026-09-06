@@ -1,4 +1,5 @@
 import 'package:sinhala_dictionary_app/core/enums/dictionary_language.dart';
+import 'package:sinhala_dictionary_app/core/enums/history_sort_options.dart';
 import 'package:sinhala_dictionary_app/core/services/database_service.dart';
 import 'package:sinhala_dictionary_app/features/search/data/word_definition.dart';
 
@@ -7,9 +8,10 @@ class FavouritesRepository {
   FavouritesRepository({required this.dbService});
 
   Future<List<WordDefinition>> getFavourites(
-    DictionaryLanguage language,
-  ) async {
-    final data = await dbService.getFavoriteWords(language);
+    DictionaryLanguage language, {
+    SortOptions sortBy = .latest,
+  }) async {
+    final data = await dbService.getFavoriteWords(language, sortOption: sortBy);
 
     return data.map((e) => WordDefinition.fromMap(e)).toList();
   }
