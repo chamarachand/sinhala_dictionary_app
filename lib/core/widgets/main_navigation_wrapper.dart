@@ -8,7 +8,7 @@ import 'package:sinhala_dictionary_app/features/history/screens/history_tab_scre
 import 'package:sinhala_dictionary_app/features/search/cubit/search_cubit.dart';
 import 'package:sinhala_dictionary_app/features/settings/screens/settings_screen.dart';
 import 'package:sinhala_dictionary_app/features/search/screens/search_screen.dart';
-import 'package:sinhala_dictionary_app/screens/custom_navigation_drawer.dart';
+import 'package:sinhala_dictionary_app/custom_navigation_drawer.dart';
 
 class MainNavigationWrapper extends StatefulWidget {
   const MainNavigationWrapper({super.key});

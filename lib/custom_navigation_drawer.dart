@@ -16,7 +16,7 @@ class CustomNavigationDrawer extends StatelessWidget {
       child: Column(
         children: [
           // Header
-          _DrawerHeader(),
+          const _DrawerHeader(),
 
           const SizedBox(height: 8),
 
@@ -51,7 +51,7 @@ class CustomNavigationDrawer extends StatelessWidget {
 
           const Spacer(),
 
-          _DrawerFooter(),
+          const _DrawerFooter(),
         ],
       ),
     );
@@ -118,10 +118,10 @@ class _DrawerFooter extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Text(
-        'v1.1.0 Layout Frame Ready',
+        'v1.2.0',
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(120),
-          fontSize: 11,
+          fontSize: 12,
         ),
       ),
     );

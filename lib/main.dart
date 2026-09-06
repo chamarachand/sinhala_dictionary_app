@@ -4,7 +4,7 @@ import 'package:sinhala_dictionary_app/core/constants/string_constants.dart';
 import 'package:sinhala_dictionary_app/core/di/injection.dart';
 import 'package:sinhala_dictionary_app/core/theme/app_theme.dart';
 import 'package:sinhala_dictionary_app/features/theme/cubit/theme_cubit.dart';
-import 'package:sinhala_dictionary_app/screens/main_navigation_wrapper.dart';
+import 'package:sinhala_dictionary_app/core/widgets/main_navigation_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
