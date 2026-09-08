@@ -29,8 +29,6 @@ class _HistoryTabScreenState extends State<HistoryTabScreen> {
       builder: (context) => const DeleteConfirmationDialog(text: 'history'),
     );
 
-    print('confirm delete: $confirmed');
-
     if (confirmed == true && mounted) {
       context.read<HistoryCubit>().clearHistory();
     }

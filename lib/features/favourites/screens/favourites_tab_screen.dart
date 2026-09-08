@@ -30,8 +30,6 @@ class _FavouritesTabScreenState extends State<FavouritesTabScreen> {
       builder: (context) => const DeleteConfirmationDialog(text: 'favourites'),
     );
 
-    print('confirm delete: $confirmed');
-
     if (confirmed == true && mounted) {
       context.read<HistoryCubit>().clearHistory();
     }

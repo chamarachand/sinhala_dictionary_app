@@ -46,27 +46,15 @@ class _AiInsightsScreenState extends State<AiInsightsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.warning,
-                        size: 48,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                      const Icon(Icons.warning, size: 48),
                       const SizedBox(height: 12),
                       Text(
                         state.message,
                         textAlign: .center,
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primaryContainer,
-                          foregroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary,
-                        ),
                         onPressed: () {
                           context.read<AiInsightsCubit>().getAiInsights(
                             word: widget.targetWord,

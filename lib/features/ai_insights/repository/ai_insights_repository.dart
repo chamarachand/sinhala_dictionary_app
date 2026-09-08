@@ -1,3 +1,4 @@
+import 'package:sinhala_dictionary_app/core/constants/url_constants.dart';
 import 'package:sinhala_dictionary_app/core/enums/ai_language.dart';
 import 'package:sinhala_dictionary_app/core/errors/exceptions.dart';
 import 'package:sinhala_dictionary_app/core/services/api_service.dart';
@@ -18,16 +19,21 @@ class AiInsightsRepository {
   }) async {
     try {
       final targetLanguage = language ?? getSavedLanguage();
+      final isSinhala = targetLanguage == AiLanguage.sinhala;
 
-      final insights = targetLanguage == AiLanguage.sinhala
-          ? await apiService.getSinhalaInsights(word)
-          : await apiService.getEnglishInsights(word);
+      final request = {"word": word, "level": "B1"};
+      final url = isSinhala
+          ? UrlConstants.sinhalaInsights
+          : UrlConstants.englishInsights;
+
+      final data = await apiService.post(url, request);
+      final insights = (data['result'] ?? '') as String;
 
       return (language: targetLanguage, insights: insights);
     } on AppException {
       rethrow;
     } catch (e) {
-      throw UnknownException();
+      throw const UnknownException();
     }
   }
 

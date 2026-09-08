@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sinhala_dictionary_app/core/constants/string_constants.dart';
 import 'package:sinhala_dictionary_app/core/di/injection.dart';
 import 'package:sinhala_dictionary_app/core/theme/app_theme.dart';
+import 'package:sinhala_dictionary_app/features/auth/repository/auth_repository.dart';
 import 'package:sinhala_dictionary_app/features/theme/cubit/theme_cubit.dart';
 import 'package:sinhala_dictionary_app/core/widgets/main_navigation_wrapper.dart';
 
@@ -10,7 +11,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupDependencies();
 
-  runApp(MyApp());
+  await getIt<AuthRepository>().initializeAnonymousUser();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -73,23 +73,28 @@ class _WordBannerState extends State<WordBanner> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primaryContainer.withAlpha(150),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      "Noun", // Change later
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                  Visibility(
+                    visible: false,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withAlpha(150),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        "Noun", // Change later
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

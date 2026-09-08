@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sinhala_dictionary_app/core/enums/dictionary_language.dart';
 import 'package:sinhala_dictionary_app/core/enums/history_sort_options.dart';
+import 'package:sinhala_dictionary_app/core/utils/app_logger.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseService {
@@ -22,9 +23,7 @@ class DatabaseService {
     final exists = await databaseExists(path);
 
     if (!exists) {
-      print(
-        "📦 First launch: Copying database from assets to local storage...",
-      );
+      appLog("First launch: Copying database from assets to local storage...");
       try {
         await Directory(dirname(path)).create(recursive: true);
       } catch (_) {}
@@ -38,9 +37,9 @@ class DatabaseService {
 
       // Write the binary data to the user's phone disk
       await File(path).writeAsBytes(bytes, flush: true);
-      print("✅ Database successfully copied!");
+      appLog("Database successfully copied!");
     } else {
-      print("📂 Database already exists on device. Opening directly.");
+      appLog("Database already exists on device. Opening directly.");
     }
 
     return await openDatabase(

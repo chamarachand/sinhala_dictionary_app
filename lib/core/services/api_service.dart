@@ -1,77 +1,117 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'package:sinhala_dictionary_app/core/constants/url_constants.dart';
 import 'package:sinhala_dictionary_app/core/errors/exceptions.dart';
+import 'package:sinhala_dictionary_app/core/services/secure_storage_service.dart';
+import 'package:sinhala_dictionary_app/core/utils/app_logger.dart';
 
 class ApiService {
-  Future<String> getEnglishInsights(String word) async {
-    String backendEndpoint = "http://localhost:3000/api/insights/english";
+  late final Dio _dio;
+  late final SecureStorageService _secureStorage;
 
-    try {
-      final response = await http
-          .post(
-            Uri.parse(backendEndpoint),
-            headers: {"Content-Type": "application/json"},
-            body: jsonEncode({"word": word, "level": "B1"}),
-          )
-          .timeout(Duration(seconds: 10));
+  ApiService({required SecureStorageService secureStorage, required Dio dio}) {
+    _dio = dio;
+    _secureStorage = secureStorage;
 
-      final statusCode = response.statusCode;
-
-      if (statusCode >= 200 && statusCode < 300) {
-        final Map<String, dynamic> data = jsonDecode(
-          utf8.decode(response.bodyBytes),
-        );
-        return data['result'] ?? '';
-      } else if (statusCode == 429) {
-        throw LimitExceedException();
-      } else {
-        throw ServerException();
-      }
-    } on SocketException {
-      throw NetworkException();
-    } on TimeoutException {
-      throw NetworkException('Request timed out. Please check your connection');
-    } on AppException {
-      rethrow;
-    } catch (e) {
-      throw UnknownException();
-    }
+    _setupInterceptors();
   }
 
-  Future<String> getSinhalaInsights(String word) async {
-    String backendEndpoint = "http://localhost:3000/api/insights/sinhala";
+  void _setupInterceptors() {
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final accessToken = await _secureStorage.getAccessToken();
+          if (accessToken != null) {
+            options.headers['Authorization'] = 'Bearer $accessToken';
+          }
+          return handler.next(options);
+        },
+        onError: (error, handler) async {
+          appLog('dio onError: $error', name: 'DIO');
+          if (error.response?.statusCode == 401 &&
+              error.requestOptions.path != UrlConstants.getRefreshToken) {
+            try {
+              final newAccessToken = await _refreshTokens();
+              if (newAccessToken == null) return;
 
+              final retryOptions = error.requestOptions;
+              retryOptions.headers['Authorization'] = 'Bearer $newAccessToken';
+
+              final response = await _dio.fetch(retryOptions);
+              return handler.resolve(response);
+            } catch (e) {
+              await _secureStorage.clearTokens();
+            }
+          }
+          return handler.next(error);
+        },
+      ),
+    );
+  }
+
+  Future<String?> _refreshTokens() async {
+    final refreshToken = await _secureStorage.getRefreshToken();
+    if (refreshToken == null) return null;
+
+    final refreshDio = Dio(BaseOptions(baseUrl: UrlConstants.baseUrl));
+    final response = await refreshDio.post(
+      UrlConstants.getRefreshToken,
+      data: {'refreshToken': refreshToken},
+    );
+
+    final newAccessToken = response.data['accessToken'];
+    final newRefreshToken = response.data['refreshToken'];
+
+    await _secureStorage.saveTokens(
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    );
+
+    return newAccessToken;
+  }
+
+  Future<Map<String, dynamic>> post(
+    String url,
+    Map<String, dynamic> request,
+  ) async {
+    appLog('url: $url', name: 'AppService (POST)');
     try {
-      final response = await http
-          .post(
-            Uri.parse(backendEndpoint),
-            headers: {"Content-Type": "application/json"},
-            body: jsonEncode({"word": word, "level": "B1"}),
-          )
-          .timeout(Duration(seconds: 10));
+      final response = await _dio.post(url, data: request);
+      return response.data;
+    } on DioException catch (e) {
+      // API returned a response
+      if (e.response != null) {
+        final statusCode = e.response?.statusCode;
 
-      final statusCode = response.statusCode;
-
-      if (statusCode >= 200 && statusCode < 300) {
-        final Map<String, dynamic> data = jsonDecode(
-          utf8.decode(response.bodyBytes),
-        );
-        return data['result'] ?? '';
-      } else if (statusCode == 429) {
-        throw LimitExceedException();
-      } else {
-        throw ServerException();
+        if (statusCode == 429) {
+          throw const LimitExceedException();
+        } else {
+          appLog('statusCode: ${e.response?.data}', name: 'Dio Exception');
+          throw const ServerException();
+        }
       }
-    } on SocketException {
-      throw NetworkException();
-    } on TimeoutException {
-      throw NetworkException('Request timed out. Please check your connection');
+
+      // API did not return a response
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+          throw NetworkException(
+            'Request timed out. Please check your connection',
+          );
+        case DioExceptionType.connectionError:
+          throw NetworkException();
+        default:
+          if (e.error is SocketException) {
+            throw NetworkException();
+          }
+          throw const UnknownException();
+      }
     } on AppException {
       rethrow;
     } catch (e) {
-      rethrow;
+      throw const UnknownException();
     }
   }
 }
